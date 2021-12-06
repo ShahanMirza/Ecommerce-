@@ -10,6 +10,7 @@ require('dotenv').config()
 const authRoutes=require('./routes/auth')
 const userRoutes=require("./routes/user")
 const categoryRouter=require("./routes/category")
+const productRouter=require("./routes/product")
 //app
 const app=express()
 //db
@@ -26,7 +27,7 @@ app.use(expressValidator());
 app.use('/api',authRoutes)
 app.use('/api',userRoutes)
 app.use('/api',categoryRouter)
-
+app.use("/api", productRouter)
 
  const port=process.env.PORT || 8000
 
