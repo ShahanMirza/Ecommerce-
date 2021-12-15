@@ -22,19 +22,28 @@ const productSchema= new mongoose.Schema({
         category:{
             type: ObjectId,
             ref: "Category",
-            required: true   
+            required: true
         },
         quantity:{
             type : Number,
         },
-        photo:{
-            type: String
+        photoPath:{
+            type: String,
+            required: false,
+        },
+        photoName: {
+            type: String,
+            required: false,
+        },
+        contentType: {
+            type: String,
+            required: false,
         },
         shipping:{
             required:false,
-            type: Boolean 
+            type: Boolean
         }
-        
+
 },{timestamps:true});
 
 module.exports=mongoose.model("Product", productSchema)
