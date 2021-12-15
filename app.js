@@ -21,6 +21,7 @@ mongoose.connect(process.env.DATABASE,{
 //middleware
 app.use(morgan('dev'))
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(expressValidator());
 //router middleware
