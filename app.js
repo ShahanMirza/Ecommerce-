@@ -5,6 +5,7 @@ const morgan= require('morgan')
 const bodyParser=require('body-parser')
 const cookieParser= require('cookie-parser')
 const expressValidator=require('express-validator')
+const cors=require('cors')
 require('dotenv').config()
 //import routes
 const authRoutes=require('./routes/auth')
@@ -13,6 +14,7 @@ const categoryRouter=require("./routes/category")
 const productRouter=require("./routes/product")
 //app
 const app=express()
+app.use('/photos', express.static(process.env.PHOTO_DIRECTORY));
 //db
 mongoose.connect(process.env.DATABASE,{
     useNewUrlParser: true
@@ -24,6 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(expressValidator());
+app.use(cors())
 //router middleware
 app.use('/api',authRoutes)
 app.use('/api',userRoutes)
