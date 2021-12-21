@@ -5,6 +5,7 @@ const { errorHandler } = require("../helpers/dbErrorHandlers")
 
 const fs = require("fs/promises");
 const path = require("path");
+const express = require('express');
 
 exports.create = (req, res) => {
     let form = new formidable.IncomingForm();
@@ -138,3 +139,117 @@ exports.update=(req,res)=>{
         })
     })
 }
+/*
+**sell/arrival
+**by sell = /products?sortBy=sold&order=desc&limit=4
+**by arrival= /product?sortBy=createdAt&order=desc&limit=4
+** if no params are sent then all products are returned
+*/
+exports.list=(req,res)=>{
+    let order = req.query.order ? req.query.order : 'asc'
+    let sortBy = req.query.sortBy ? req.query.sortBy : '_id'
+    let limit = req.query.limt ? req.query.limt : 6
+
+    Product.find().select('-photo').populate('category')
+    .sort([[sortBy, order]])
+    .limit(limit)
+    .exec((err,data)=>{
+        if(err){
+            return res.status(400).json({
+                error: "Products not found"
+            })
+        }
+        res.json(data)
+    })
+}
+/*
+** it will find the product based on req product query
+** other products that has the same category, will be returned
+*/
+exports.listRelated=(req,res)=>{
+   let limit= req.query.limit ? req.query.limit : 6
+   
+   
+   Product.find({_id:{$ne: req.product},category: req.product.category})
+   .limit(limit)
+   .populate('category','_id name')
+   .exec((err,products)=>{
+       if(err){
+           return res.json(400).json({
+               error:"Product not found"
+           })
+       }
+       res.json(products)
+   })
+}
+
+
+exports.listCategories=(req,res)=>{
+    Product.distinct('category',{},(err,categories)=>{
+        if(err){
+            return res.status(400).json({
+                error:" Categories not found"
+            })
+        }
+        res.json(categories)
+    })
+}
+/*
+** list product by search
+** we will implement product search in react front end 
+** we will show category in check box and price range in radio buttons
+** as the user clicks those checkbox and radio buttions
+** we will make api request and show product to user base on what he wants
+*/
+
+exports.listBySearch=(req,res)=>{
+    let order = req.body.order ? req.body.order : 'desc'
+    let sortBy= req.body.sortBy ? req.body.sortBy : "_id"
+    let limit = req.body.limit ? req.body.limit : 100
+    let skip = parseInt(req.body.skip)
+    let findArgs={}
+
+
+    for(let key in req.body.filters){
+        if(req.body.filters[key].length>0){
+            if(key ==="price"){
+                findArgs[key]={
+                    $gte:req.body.filters[key][0],
+                    $lte: req.body.filters[key][1]
+                }
+            }
+            else{
+                 findArgs[key]=req.body.filters[key]   
+            }
+        }
+    }
+    Product.find(findArgs)
+    .select('-photo')
+    .populate('category')
+    .sort([[sortBy,order]])
+    .skip(skip)
+    .limit(limit)
+    .exec((err,data)=>{
+        if(err){
+            return res.status(400).json({
+                error: "Products not found"
+            })
+        }
+        res.json({
+            size: data.length,
+            data
+        })
+    })
+}
+
+exports.photo = (req, res, next) => {
+      Product.findById(req.product.id,  (err, items) => { 
+        if (err) { 
+            console.log(err); 
+        } 
+        else { 
+           let  service_pic = process.env.PHOTO_DIRECTORY +'/'+ items.photoName;
+             return res.status(200).send(service_pic);
+        } 
+    }); 
+};
