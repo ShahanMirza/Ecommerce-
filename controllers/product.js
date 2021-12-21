@@ -248,8 +248,8 @@ exports.photo = (req, res, next) => {
             console.log(err); 
         } 
         else { 
-           let  service_pic = process.env.PHOTO_DIRECTORY +'/'+ items.photoName;
-             return res.status(200).send(service_pic);
+            let  service_pic = process.env.URL +'/photos/'+ items.photoName;
+             return res.status(200).json(service_pic);
         } 
     }); 
 };
