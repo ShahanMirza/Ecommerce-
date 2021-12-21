@@ -13,6 +13,9 @@ const categoryRouter=require("./routes/category")
 const productRouter=require("./routes/product")
 //app
 const app=express()
+
+app.use('/photos', express.static(process.env.PHOTO_DIRECTORY));
+
 //db
 mongoose.connect(process.env.DATABASE,{
     useNewUrlParser: true
