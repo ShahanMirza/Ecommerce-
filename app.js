@@ -13,7 +13,8 @@ const userRoutes=require("./routes/user")
 const categoryRouter=require("./routes/category")
 const productRouter=require("./routes/product")
 const braintreeRouter=require("./routes/braintree")
-
+const orderRouter=require("./routes/order")
+// const orderRouter=require("./routes/order")
 //app
 const app=express()
 app.use('/photos', express.static(process.env.PHOTO_DIRECTORY));
@@ -35,6 +36,7 @@ app.use('/api',userRoutes)
 app.use('/api',categoryRouter)
 app.use("/api", productRouter)
 app.use("/api",braintreeRouter)
+app.use("/api",orderRouter)
  const port=process.env.PORT || 8000
 
 app.listen(port,()=>{
