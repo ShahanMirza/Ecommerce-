@@ -37,6 +37,11 @@ app.use('/api',categoryRouter)
 app.use("/api", productRouter)
 app.use("/api",braintreeRouter)
 app.use("/api",orderRouter)
+
+app.get('/test', (req, res) => {
+  res.send('Server is running ');
+  
+});
  const port=process.env.PORT || 8000
 
 app.listen(port,()=>{
